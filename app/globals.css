@@ -1,26 +1,394 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design Tokens – Chandy's Global Exports
+   Token rationale: --ink is the deep indigo-navy from the
+   business card logo, grounding every heading in industry
+   without leaning on corporate blue. --signal carries the
+   one action on screen—a pure mid-blue that passes AA on
+   --mill and on --ink alike. --blueprint is the tinted wash
+   used for technical panels, drawing from architectural
+   print culture that suits a specification-first exporter.
+   --mill is a cool off-white that reads as precision paper
+   rather than the warm cream associated with craft and
+   artisan brands. --rosewood names the material itself: the
+   saturated heartwood brown that appears in the products and
+   nowhere else on the page, so its presence always carries
+   meaning. --brass is a hardware accent, used under 3% of
+   pixels, reserved for nodes, markers and interactive
+   highlights—where a real instrument uses brass fittings.
+   ============================================================ */
+
+@theme {
+  /* Color tokens */
+  --color-ink: #0a2450;
+  --color-signal: #1b6ef3;
+  --color-blueprint: #e8f0fb;
+  --color-mill: #f2f4f7;
+  --color-rosewood: #6b3a2a;
+  --color-brass: #c9a227;
+
+  /* Disable Tailwind's default palette */
+  --color-*: initial;
+  --color-ink: #0a2450;
+  --color-signal: #1b6ef3;
+  --color-blueprint: #e8f0fb;
+  --color-mill: #f2f4f7;
+  --color-rosewood: #6b3a2a;
+  --color-brass: #c9a227;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Spacing — 8px rhythm */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-8: 64px;
+  --spacing-10: 80px;
+  --spacing-12: 96px;
+  --spacing-16: 128px;
+  --spacing-20: 160px;
+  --spacing-24: 192px;
+
+  /* Type scale — 1.25 ratio from 16px */
+  --font-size-xs: 0.64rem;     /* 10.24px */
+  --font-size-sm: 0.8rem;      /* 12.8px  */
+  --font-size-base: 1rem;      /* 16px    */
+  --font-size-lg: 1.125rem;    /* 18px    */
+  --font-size-xl: 1.25rem;     /* 20px    */
+  --font-size-2xl: 1.5625rem;  /* 25px    */
+  --font-size-3xl: 1.953rem;   /* 31.25px */
+  --font-size-4xl: 2.441rem;   /* 39px    */
+  --font-size-5xl: 3.052rem;   /* 48.8px  */
+  --font-size-6xl: 3.815rem;   /* 61px    */
+  --font-size-7xl: 4.768rem;   /* 76.3px  */
+
+  /* Font families — set by next/font CSS variables */
+  --font-family-archivo: var(--font-archivo), system-ui, sans-serif;
+  --font-family-newsreader: var(--font-newsreader), Georgia, serif;
+  --font-family-mono: var(--font-ibm-plex-mono), "Courier New", monospace;
+
+  /* Grid */
+  --max-width-content: 1440px;
+
+  /* Transitions */
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 480ms;
+  --duration-xslow: 700ms;
+  --ease-out: cubic-bezier(0.25, 0, 0, 1);
+}
+
+/* ============================================================
+   CSS Custom Properties (for use in JS/GSAP)
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #0a2450;
+  --signal: #1b6ef3;
+  --blueprint: #e8f0fb;
+  --mill: #f2f4f7;
+  --rosewood: #6b3a2a;
+  --brass: #c9a227;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--mill);
+  color: var(--ink);
+  font-family: var(--font-family-newsreader);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   Typography Classes
+   ============================================================ */
+
+/* Display classes use Archivo, width axis 115, weight 700–800 */
+.display-1 {
+  font-family: var(--font-family-archivo);
+  font-size: clamp(3rem, 6vw, var(--font-size-7xl));
+  font-weight: 800;
+  font-variation-settings: "wdth" 115;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.display-2 {
+  font-family: var(--font-family-archivo);
+  font-size: clamp(2.2rem, 4.5vw, var(--font-size-6xl));
+  font-weight: 800;
+  font-variation-settings: "wdth" 115;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.display-3 {
+  font-family: var(--font-family-archivo);
+  font-size: clamp(1.6rem, 3vw, var(--font-size-5xl));
+  font-weight: 700;
+  font-variation-settings: "wdth" 115;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.display-4 {
+  font-family: var(--font-family-archivo);
+  font-size: clamp(1.25rem, 2.2vw, var(--font-size-4xl));
+  font-weight: 700;
+  font-variation-settings: "wdth" 115;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+}
+
+/* Lede — intro paragraph, Newsreader */
+.lede {
+  font-family: var(--font-family-newsreader);
+  font-size: clamp(1.125rem, 1.5vw, var(--font-size-2xl));
+  font-weight: 400;
+  line-height: 1.5;
+  max-width: 68ch;
+}
+
+/* Body — Newsreader 18px, max 68ch */
+.body-text {
+  font-family: var(--font-family-newsreader);
+  font-size: var(--font-size-lg);
+  font-weight: 400;
+  line-height: 1.65;
+  max-width: 68ch;
+}
+
+/* Spec — IBM Plex Mono, tabular-nums, only for numeric data */
+.spec {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+/* Eyebrow — single word labels, sentence case, no tracking */
+.eyebrow {
+  font-family: var(--font-family-archivo);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-variation-settings: "wdth" 115;
+  color: var(--rosewood);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ============================================================
+   Layout Utilities
+   ============================================================ */
+
+.content-width {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 5rem);
+}
+
+.full-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+/* 12-column grid */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+/* ============================================================
+   Focus Rings — AA, 2px --signal at 2px offset, never removed
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Skip Link
+   ============================================================ */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: var(--signal);
+  color: var(--mill);
+  font-family: var(--font-family-archivo);
+  font-weight: 700;
+  border-radius: 0 0 4px 4px;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
+   Button System
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  font-family: var(--font-family-archivo);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  font-variation-settings: "wdth" 115;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--signal);
+  color: var(--mill);
+  border-radius: 2px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background-color: var(--ink);
+  color: var(--mill);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--mill);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  border-color: var(--mill);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.btn-ghost-ink {
+  background-color: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+}
+
+.btn-ghost-ink:hover,
+.btn-ghost-ink:focus-visible {
+  background-color: var(--ink);
+  color: var(--mill);
+}
+
+/* ============================================================
+   Hairline rules
+   ============================================================ */
+.rule {
+  border: none;
+  border-top: 1px solid var(--blueprint);
+}
+
+/* ============================================================
+   Marquee
+   ============================================================ */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   Section spacing
+   ============================================================ */
+.section-pad {
+  padding-block: clamp(5rem, 10vw, 9rem);
+}
+
+/* ============================================================
+   Spec chip
+   ============================================================ */
+.spec-chip {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  background-color: var(--blueprint);
+  color: var(--ink);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  border-radius: 2px;
+}
+
+.spec-chip-pending {
+  background-color: transparent;
+  color: var(--rosewood);
+  border: 1px dashed currentColor;
 }
