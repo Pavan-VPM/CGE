@@ -16,35 +16,35 @@ export function MaterialsSection({ onQuoteOpen }: MaterialsSectionProps) {
     return (
       <section
         id="materials"
-        className="section-pad"
-        style={{ backgroundColor: "var(--blueprint)" }}
+        className="section-pad relative"
+        style={{ backgroundColor: "transparent" }}
         aria-label="Materials"
       >
-        <div className="content-width" style={{ textAlign: "center" }}>
-          <p className="eyebrow" style={{ marginBottom: "1rem" }}>Materials</p>
-          <h2 className="display-2" style={{ color: "var(--ink)", marginBottom: "2rem" }}>
+        <div className="content-width relative z-10" style={{ textAlign: "center" }}>
+          <p className="eyebrow" style={{ marginBottom: "1rem", color: "var(--mill)", opacity: 0.8 }}>Materials</p>
+          <h2 className="display-2" style={{ color: "var(--mill)", marginBottom: "2rem", textShadow: "0 4px 16px rgba(0,0,0,0.5)" }}>
             The sample book
           </h2>
           <div
+            className="glass-panel"
             style={{
-              border: "1px dashed var(--rosewood)",
-              borderRadius: "4px",
               padding: "3rem 2rem",
               maxWidth: "400px",
               margin: "0 auto",
+              borderRadius: "8px"
             }}
           >
             <p
               className="display-4"
-              style={{ color: "var(--rosewood)", marginBottom: "1rem" }}
+              style={{ color: "var(--mill)", marginBottom: "1rem" }}
             >
               Sample book in preparation
             </p>
-            <p className="body-text" style={{ color: "var(--ink)", marginBottom: "1.5rem" }}>
+            <p className="body-text" style={{ color: "var(--mill)", opacity: 0.8, marginBottom: "1.5rem" }}>
               We are photographing our current stock. In the meantime, contact
               us with the species and dimensions you need.
             </p>
-            <button onClick={onQuoteOpen} className="btn btn-primary">
+            <button onClick={onQuoteOpen} className="btn glass-panel" style={{ color: "var(--mill)", border: "1px solid rgba(255,255,255,0.2)" }}>
               Ask about a species
             </button>
           </div>
@@ -57,13 +57,13 @@ export function MaterialsSection({ onQuoteOpen }: MaterialsSectionProps) {
   return (
     <section
       id="materials"
-      className="section-pad"
-      style={{ backgroundColor: "var(--blueprint)" }}
+      className="section-pad relative"
+      style={{ backgroundColor: "transparent" }}
       aria-label="Materials sample book"
     >
-      <div className="content-width">
-        <p className="eyebrow" style={{ marginBottom: "1rem" }}>Materials</p>
-        <h2 className="display-2" style={{ color: "var(--ink)", marginBottom: "3rem" }}>
+      <div className="content-width relative z-10">
+        <p className="eyebrow" style={{ marginBottom: "1rem", color: "var(--mill)", opacity: 0.8 }}>Materials</p>
+        <h2 className="display-2" style={{ color: "var(--mill)", marginBottom: "3rem", textShadow: "0 4px 16px rgba(0,0,0,0.5)" }}>
           The sample book
         </h2>
 

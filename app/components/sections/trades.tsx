@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion, motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import { SITE } from "@/content/site";
 
 if (typeof window !== "undefined") {
@@ -52,25 +52,28 @@ export function TradesSection() {
     return () => ctx.revert();
   }, [prefersReduced]);
 
+  const { scrollYProgress: sectionProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const titleY = useTransform(sectionProgress, [0, 1], [80, -80]);
+
   return (
     <section
       id="trades"
       ref={sectionRef}
-      className="section-pad"
-      style={{ backgroundColor: "var(--mill)" }}
+      className="section-pad relative"
+      style={{ backgroundColor: "transparent" }}
       aria-label="Three trades"
     >
       <div className="content-width">
         {/* Header */}
-        <p className="eyebrow" style={{ marginBottom: "1rem" }}>
+        <p className="eyebrow" style={{ marginBottom: "1rem", color: "var(--mill)", opacity: 0.8 }}>
           Trades
         </p>
-        <h2
+        <motion.h2
           className="display-2"
-          style={{ color: "var(--ink)", marginBottom: "4rem", maxWidth: "20ch" }}
+          style={{ color: "var(--mill)", marginBottom: "4rem", maxWidth: "20ch", y: titleY }}
         >
           Three products out of one forest
-        </h2>
+        </motion.h2>
 
         {/* The seam SVG + trades */}
         <div style={{ position: "relative" }}>

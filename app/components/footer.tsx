@@ -17,15 +17,18 @@ export function Footer() {
 
   return (
     <footer
-      style={{ backgroundColor: "var(--ink)", color: "var(--mill)" }}
+      style={{ backgroundColor: "transparent", color: "var(--mill)" }}
       aria-label="Site footer"
     >
       <div className="content-width" style={{ paddingBlock: "4rem" }}>
         <div
+          className="glass-panel"
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
             gap: "3rem",
+            padding: "3rem",
+            borderRadius: "12px",
           }}
         >
           {/* Brand + taglines */}

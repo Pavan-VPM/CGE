@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
+import { useReducedMotion, motion, useScroll, useTransform } from "framer-motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -87,27 +87,27 @@ export function YieldSection() {
     return (
       <section
         id="yield"
-        className="section-pad"
-        style={{ backgroundColor: "var(--mill)" }}
+        className="section-pad relative"
+        style={{ backgroundColor: "transparent" }}
         aria-label="One log, many goods"
       >
-        <div className="content-width">
-          <p className="eyebrow" style={{ marginBottom: "3rem" }}>Yield</p>
+        <div className="content-width relative z-10">
+          <p className="eyebrow" style={{ marginBottom: "3rem", color: "var(--mill)" }}>Yield</p>
           <div className="flex flex-col gap-16">
             {/* State 1 */}
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex flex-col items-center gap-4 text-center glass-panel p-12 rounded-lg">
               <YieldLogSVG />
-              <p className="display-3" style={{ color: "var(--ink)" }}>One log.</p>
+              <p className="display-3" style={{ color: "var(--mill)" }}>One log.</p>
             </div>
             {/* State 2 */}
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex flex-col items-center gap-4 text-center glass-panel p-12 rounded-lg">
               <YieldBilletsSVG />
-              <p className="display-3" style={{ color: "var(--ink)" }}>Quartersawn four ways.</p>
+              <p className="display-3" style={{ color: "var(--mill)" }}>Quartersawn four ways.</p>
             </div>
             {/* State 3 */}
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex flex-col items-center gap-4 text-center glass-panel p-12 rounded-lg">
               <YieldGoodsSVG />
-              <p className="display-3" style={{ color: "var(--ink)" }}>Nothing left over.</p>
+              <p className="display-3" style={{ color: "var(--mill)" }}>Nothing left over.</p>
             </div>
           </div>
           <YieldCopy />
@@ -120,13 +120,13 @@ export function YieldSection() {
     <div ref={containerRef}>
       <section
         id="yield"
-        style={{ backgroundColor: "var(--mill)" }}
+        style={{ backgroundColor: "transparent" }}
         aria-label="One log, many goods"
       >
         <div ref={pinRef} style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-          <p className="eyebrow absolute top-8 left-1/2 -translate-x-1/2" style={{ color: "var(--rosewood)" }}>Yield</p>
+          <p className="eyebrow absolute top-8 left-1/2 -translate-x-1/2" style={{ color: "var(--mill)", opacity: 0.8 }}>Yield</p>
 
-          <div style={{ position: "relative", width: "100%", maxWidth: 700, margin: "0 auto", padding: "0 2rem" }}>
+          <div className="glass-panel" style={{ position: "relative", width: "100%", maxWidth: 700, margin: "0 auto", padding: "4rem", borderRadius: "16px" }}>
             {/* All three states overlaid */}
             <svg
               viewBox="0 0 700 400"
@@ -203,21 +203,21 @@ export function YieldSection() {
             <p
               ref={caption1Ref}
               className="display-3 text-center"
-              style={{ color: "var(--ink)", marginTop: "1.5rem" }}
+              style={{ color: "var(--mill)", marginTop: "1.5rem" }}
             >
               One log.
             </p>
             <p
               ref={caption2Ref}
               className="display-3 text-center absolute bottom-0 inset-x-0"
-              style={{ color: "var(--ink)", opacity: 0 }}
+              style={{ color: "var(--mill)", opacity: 0 }}
             >
               Quartersawn four ways.
             </p>
             <p
               ref={caption3Ref}
               className="display-3 text-center absolute bottom-0 inset-x-0"
-              style={{ color: "var(--ink)", opacity: 0 }}
+              style={{ color: "var(--mill)", opacity: 0 }}
             >
               Nothing left over.
             </p>
@@ -228,10 +228,10 @@ export function YieldSection() {
       {/* Released content */}
       <section
         className="section-pad"
-        style={{ backgroundColor: "var(--mill)" }}
+        style={{ backgroundColor: "transparent" }}
         aria-label="Yield practice"
       >
-        <div className="content-width" style={{ maxWidth: "60ch" }}>
+        <div className="content-width glass-panel" style={{ maxWidth: "60ch", padding: "3rem", borderRadius: "12px" }}>
           <YieldCopy />
         </div>
       </section>
@@ -298,7 +298,7 @@ function YieldCopy() {
   return (
     <p
       className="body-text"
-      style={{ color: "var(--ink)", marginTop: "3rem" }}
+      style={{ color: "var(--mill)", marginTop: "2rem" }}
     >
       Offcuts from furniture stock become instrument parts. A board too narrow
       for a tabletop is exactly right for a fretboard blank. This is why our

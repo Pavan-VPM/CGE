@@ -72,7 +72,7 @@
   --font-family-mono: var(--font-ibm-plex-mono), "Courier New", monospace;
 
   /* Grid */
-  --max-width-content: 1440px;
+  --max-width-content: 2560px; /* Increased for 40-inch screens */
 
   /* Transitions */
   --duration-fast: 160ms;
@@ -92,6 +92,80 @@
   --mill: #f2f4f7;
   --rosewood: #6b3a2a;
   --brass: #c9a227;
+}
+
+/* ============================================================
+   Cinematic preloader — deliberately its own temporary world.
+   The geometry remains vector/CSS so the opening is light enough
+   to begin before the Three background has settled.
+   ============================================================ */
+.preloader-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  isolation: isolate;
+  color: #e8f0fb;
+  background: #07162e;
+  font-family: var(--font-family-archivo);
+  will-change: transform;
+}
+
+.preloader-root::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(ellipse 85% 70% at 72% 38%, #123866 0%, #0a2450 44%, #07162e 100%);
+  content: "";
+}
+
+.preloader-noise {
+  position: absolute;
+  inset: -50%;
+  z-index: 4;
+  opacity: .08;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+.preloader-corner { position: absolute; z-index: 5; color: rgba(232,240,251,.48); font-family: var(--font-family-mono); font-size: 9px; letter-spacing: .12em; }
+.preloader-corner--top { top: clamp(18px, 3vw, 48px); left: clamp(18px, 4vw, 68px); }
+.preloader-corner--bottom { right: clamp(18px, 4vw, 68px); bottom: clamp(18px, 3vw, 48px); }
+.preloader-visuals { position: absolute; inset: 0; perspective: 1000px; pointer-events: none; }
+.preloader-grain { position: absolute; width: min(76vw, 1050px); overflow: visible; stroke: rgba(201,162,39,.52); stroke-width: 1; }
+.preloader-grain--one { top: 8%; right: -12%; transform: rotate(-8deg); }
+.preloader-grain--two { bottom: 3%; left: -22%; opacity: .55 !important; transform: rotate(12deg) scale(1.22); }
+.preloader-grid { position: absolute; width: min(56vw, 720px); height: min(50vw, 580px); right: -7vw; top: 18%; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid rgba(232,240,251,.14); transform: rotateX(56deg) rotateZ(-18deg); transform-style: preserve-3d; }
+.preloader-grid i { border-right: 1px solid rgba(232,240,251,.14); border-bottom: 1px solid rgba(232,240,251,.14); }
+.preloader-strings { position: absolute; top: 34%; right: -6vw; width: 78vw; transform: rotate(-10deg); }
+.preloader-string { display: block; height: 1px; margin: 16px 0; background: linear-gradient(90deg, transparent, rgba(232,240,251,.82) 45%, rgba(201,162,39,.8)); box-shadow: 0 0 12px rgba(232,240,251,.12); }
+.preloader-route-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.preloader-route { stroke: #c9a227; stroke-width: 1.2; stroke-dasharray: 860; filter: drop-shadow(0 0 6px rgba(201,162,39,.4)); }
+.preloader-node { fill: #e8f0fb; filter: drop-shadow(0 0 8px rgba(232,240,251,.75)); }
+.preloader-content { position: absolute; z-index: 5; top: 50%; left: clamp(18px, 11vw, 180px); width: min(78vw, 880px); transform: translateY(-44%); }
+.preloader-meter { margin-bottom: 16px; color: #c9a227; font-family: var(--font-family-mono); font-size: clamp(2rem, 5vw, 4.75rem); font-variant-numeric: tabular-nums; font-weight: 400; letter-spacing: -.08em; line-height: .9; }
+.preloader-meter em { margin-left: .06em; font-size: .38em; font-style: normal; letter-spacing: 0; vertical-align: top; }
+.preloader-copy-wrap { position: relative; height: clamp(4.7rem, 11vw, 10rem); overflow: hidden; }
+.preloader-copy { font-size: clamp(3.2rem, 9.4vw, 10rem); font-weight: 800; letter-spacing: -.075em; line-height: .82; text-transform: uppercase; }
+.preloader-copy-line { position: absolute; inset: 0; display: block; }
+.preloader-origin { height: 20px; margin-top: clamp(18px, 3vw, 44px); overflow: hidden; }
+.preloader-word { display: inline-block; color: rgba(232,240,251,.64); font-family: var(--font-family-mono); font-size: clamp(9px, 1vw, 12px); letter-spacing: .14em; line-height: 1.45; }
+.preloader-rule { position: relative; width: min(56vw, 630px); height: 1px; margin-top: 22px; overflow: hidden; background: rgba(232,240,251,.18); }
+.preloader-scan { position: absolute; inset: 0; transform: scaleX(0); transform-origin: left; background: #c9a227; }
+.preloader-brand { position: absolute; z-index: 6; right: clamp(18px, 8vw, 140px); bottom: clamp(30px, 12vh, 128px); width: min(75vw, 920px); clip-path: inset(0 0 100% 0); color: #e8f0fb; font-size: clamp(2.7rem, 8.5vw, 9.25rem); font-weight: 800; letter-spacing: -.08em; line-height: .79; text-align: right; text-transform: uppercase; transform: translateY(22%); }
+.preloader-brand-detail { margin-top: 20px; opacity: 0; color: #c9a227; font-family: var(--font-family-mono); font-size: clamp(8px, .8vw, 11px); font-weight: 400; letter-spacing: .14em; line-height: 1.5; transform: translateY(12px); }
+.preloader-brand-catalog { color: rgba(232,240,251,.55); letter-spacing: .08em; }
+
+@media (max-width: 640px) {
+  .preloader-content { top: 46%; left: 22px; width: calc(100% - 44px); }
+  .preloader-copy-wrap { height: 6.2rem; }
+  .preloader-copy { font-size: clamp(3.2rem, 15vw, 5.1rem); }
+  .preloader-grid { width: 100vw; height: 86vw; right: -26vw; top: 18%; }
+  .preloader-grain--one { width: 140vw; right: -52vw; top: 9%; }
+  .preloader-strings { width: 125vw; right: -49vw; top: 29%; }
+  .preloader-brand { right: 20px; bottom: 58px; width: calc(100% - 40px); font-size: clamp(2.6rem, 14vw, 5.1rem); }
+  .preloader-brand-detail { margin-top: 15px; font-size: 8px; }
+  .preloader-brand-catalog { max-width: 270px; margin-left: auto; }
 }
 
 /* ============================================================
@@ -124,8 +198,8 @@ html {
 }
 
 body {
-  background-color: var(--mill);
-  color: var(--ink);
+  background-color: var(--ink);
+  color: var(--mill);
   font-family: var(--font-family-newsreader);
   font-size: var(--font-size-lg);
   line-height: 1.6;
@@ -140,20 +214,22 @@ body {
 /* Display classes use Archivo, width axis 115, weight 700–800 */
 .display-1 {
   font-family: var(--font-family-archivo);
-  font-size: clamp(3rem, 6vw, var(--font-size-7xl));
+  font-size: clamp(4rem, 8vw, 16rem); /* Scaled for ultra-wide */
   font-weight: 800;
-  font-variation-settings: "wdth" 115;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-variation-settings: "wdth" 125; /* Wider for cinematic feel */
+  line-height: 0.95;
+  letter-spacing: -0.04em; /* Tighter tracking */
+  text-transform: uppercase;
 }
 
 .display-2 {
   font-family: var(--font-family-archivo);
-  font-size: clamp(2.2rem, 4.5vw, var(--font-size-6xl));
+  font-size: clamp(3rem, 6vw, 12rem);
   font-weight: 800;
-  font-variation-settings: "wdth" 115;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  font-variation-settings: "wdth" 125;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 
 .display-3 {
@@ -177,7 +253,7 @@ body {
 /* Lede — intro paragraph, Newsreader */
 .lede {
   font-family: var(--font-family-newsreader);
-  font-size: clamp(1.125rem, 1.5vw, var(--font-size-2xl));
+  font-size: clamp(1.125rem, 1.5vw, 2.5rem);
   font-weight: 400;
   line-height: 1.5;
   max-width: 68ch;
@@ -217,9 +293,9 @@ body {
    ============================================================ */
 
 .content-width {
-  max-width: 1440px;
+  max-width: var(--max-width-content);
   margin-inline: auto;
-  padding-inline: clamp(1.5rem, 5vw, 5rem);
+  padding-inline: clamp(1.5rem, 5vw, 10rem);
 }
 
 .full-bleed {
@@ -391,4 +467,22 @@ body {
   background-color: transparent;
   color: var(--rosewood);
   border: 1px dashed currentColor;
+}
+
+/* ============================================================
+   Cinematic Glassmorphism
+   ============================================================ */
+.glass-panel {
+  background: rgba(10, 36, 80, 0.4); /* Ink base */
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel-light {
+  background: rgba(242, 244, 247, 0.1); /* Mill base */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

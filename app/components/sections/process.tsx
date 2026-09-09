@@ -140,16 +140,17 @@ export function ProcessSection() {
           left: 0,
           right: 0,
           height: "3px",
-          background: "var(--blueprint)",
+          background: "rgba(255,255,255,0.1)",
           zIndex: 10,
         }}
       >
         <div
           style={{
             height: "100%",
-            background: "var(--signal)",
+            background: "var(--mill)",
             width: `${((activeStage + 1) / PROCESS_STAGES.length) * 100}%`,
             transition: "width 0.3s ease",
+            boxShadow: "0 0 12px rgba(255,255,255,0.8)"
           }}
         />
       </div>
@@ -179,11 +180,12 @@ export function ProcessSection() {
               background: "none",
               border: "none",
               cursor: "pointer",
-              color: "var(--ink)",
-              opacity: i === activeStage ? 1 : 0.35,
-              fontSize: "0.7rem",
-              transition: "opacity 0.3s",
+              color: "var(--mill)",
+              opacity: i === activeStage ? 1 : 0.4,
+              fontSize: "0.75rem",
+              transition: "all 0.3s",
               padding: "0.25rem",
+              textShadow: i === activeStage ? "0 0 8px rgba(255,255,255,0.5)" : "none"
             }}
           >
             {stage.title}
@@ -192,7 +194,7 @@ export function ProcessSection() {
       </nav>
 
       {/* Horizontal track */}
-      <div style={{ minHeight: "100vh", backgroundColor: "var(--mill)", overflow: "hidden" }}>
+      <div style={{ minHeight: "100vh", backgroundColor: "transparent", overflow: "hidden" }}>
         <div
           ref={trackRef}
           style={{
@@ -213,39 +215,53 @@ export function ProcessSection() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
+                alignItems: "center",
                 padding: "clamp(2rem, 6vw, 5rem)",
                 position: "relative",
                 overflow: "hidden",
-                backgroundColor: "var(--mill)",
+                backgroundColor: "transparent",
               }}
             >
-              {/* Large background number */}
-              <p
-                aria-hidden="true"
+              {/* Glass Card */}
+              <div 
+                className="glass-panel"
                 style={{
-                  position: "absolute",
-                  right: "5vw",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  fontFamily: "var(--font-family-archivo)",
-                  fontSize: "clamp(10rem, 22vw, 22rem)",
-                  fontWeight: 800,
-                  fontVariationSettings: '"wdth" 125',
-                  color: "var(--blueprint)",
-                  lineHeight: 1,
-                  userSelect: "none",
-                  pointerEvents: "none",
-                  letterSpacing: "-0.06em",
+                  position: "relative",
+                  zIndex: 1,
+                  maxWidth: "800px",
+                  width: "100%",
+                  padding: "4rem",
+                  borderRadius: "8px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "2rem"
                 }}
               >
-                {stage.number}
-              </p>
+                {/* Large overlay number */}
+                <p
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    right: "-1rem",
+                    top: "-2rem",
+                    fontFamily: "var(--font-family-archivo)",
+                    fontSize: "clamp(6rem, 15vw, 15rem)",
+                    fontWeight: 800,
+                    fontVariationSettings: '"wdth" 125',
+                    color: "rgba(255,255,255,0.05)",
+                    lineHeight: 1,
+                    userSelect: "none",
+                    pointerEvents: "none",
+                    letterSpacing: "-0.06em",
+                  }}
+                >
+                  {stage.number}
+                </p>
 
-              <div style={{ position: "relative", zIndex: 1, maxWidth: "44ch" }}>
-                <h2 className="display-2" style={{ color: "var(--ink)", marginBottom: "1.5rem" }}>
+                <h2 className="display-2" style={{ color: "var(--mill)", margin: 0, textShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
                   {stage.title}
                 </h2>
-                <p className="lede" style={{ color: "var(--ink)", opacity: 0.8 }}>
+                <p className="lede" style={{ color: "var(--mill)", opacity: 0.9, textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>
                   {stage.description}
                 </p>
               </div>

@@ -87,7 +87,7 @@ export default function HomePage() {
 
       {/* Smooth scroll provider */}
       <LenisProvider>
-        <div style={{ opacity: preloaderDone ? 1 : 0, transition: "opacity 0.3s" }}>
+        <div style={{ opacity: preloaderDone ? 1 : 0, transition: "opacity 0.3s", position: "relative" }}>
           <Header onQuoteOpen={() => setQuoteOpen(true)} />
 
           <main id="main-content">

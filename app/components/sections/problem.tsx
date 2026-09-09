@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion, motion, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -75,12 +75,20 @@ export function ProblemSection() {
     return () => ctx.revert();
   }, [prefersReduced]);
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const headingY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
   return (
     <section
       id="sourcing"
-      ref={containerRef}
-      className="section-pad"
-      style={{ backgroundColor: "var(--ink)" }}
+      ref={(el) => {
+        (containerRef as React.MutableRefObject<HTMLElement | null>).current = el;
+        (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el;
+      }}
+      className="section-pad relative"
+      style={{ backgroundColor: "transparent" }}
       aria-label="The sourcing problem"
     >
       {!prefersReduced ? (
@@ -88,17 +96,17 @@ export function ProblemSection() {
         <div ref={pinRef} style={{ minHeight: "100vh", overflow: "hidden", position: "relative" }}>
           <div className="content-width" style={{ paddingBlock: "6rem" }}>
             {/* Eyebrow */}
-            <p className="eyebrow" style={{ color: "var(--rosewood)", marginBottom: "1rem" }}>
+            <p className="eyebrow" style={{ color: "var(--brass)", marginBottom: "1rem" }}>
               Sourcing
             </p>
 
-            {/* Continuing headline */}
-            <h2
+            {/* Parallax heading */}
+            <motion.h2
               className="display-3"
-              style={{ color: "var(--mill)", marginBottom: "3rem", maxWidth: "54ch" }}
+              style={{ color: "var(--mill)", marginBottom: "3rem", maxWidth: "54ch", y: headingY, opacity: headingOpacity }}
             >
               Buying wood products from overseas is cheap, until it isn&apos;t
-            </h2>
+            </motion.h2>
 
             {/* Stack of items */}
             <div style={{ position: "relative", minHeight: "320px" }}>

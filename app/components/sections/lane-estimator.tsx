@@ -91,15 +91,15 @@ export function LaneEstimator({ onQuoteOpen }: LaneEstimatorProps) {
   return (
     <section
       id="reach"
-      className="section-pad"
-      style={{ backgroundColor: "var(--mill)" }}
+      className="section-pad relative"
+      style={{ backgroundColor: "transparent" }}
       aria-label="Lane estimator"
     >
-      <div className="content-width">
-        <p className="eyebrow" style={{ marginBottom: "1rem" }}>Reach</p>
+      <div className="content-width relative z-10 glass-panel" style={{ padding: "4rem", borderRadius: "16px" }}>
+        <p className="eyebrow" style={{ marginBottom: "1rem", color: "var(--mill)", opacity: 0.8 }}>Reach</p>
         <h2
           className="display-2"
-          style={{ color: "var(--ink)", marginBottom: "3rem", maxWidth: "22ch" }}
+          style={{ color: "var(--mill)", marginBottom: "3rem", maxWidth: "22ch", textShadow: "0 4px 16px rgba(0,0,0,0.5)" }}
         >
           Tell it where you are and what you need
         </h2>

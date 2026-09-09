@@ -12,6 +12,7 @@
     "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.1.1",
     "@studio-freight/lenis": "^1.0.42",
     "@types/three": "^0.185.4",
     "framer-motion": "^13.2.0",
@@ -21,7 +22,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-intersection-observer": "^11.0.1",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "three-stdlib": "^2.36.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

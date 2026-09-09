@@ -28,13 +28,13 @@ export function PartsViewerSection({ onQuoteOpen }: PartsViewerSectionProps) {
   return (
     <section
       id="parts"
-      className="section-pad"
-      style={{ backgroundColor: "var(--mill)" }}
+      className="section-pad relative"
+      style={{ backgroundColor: "transparent" }}
       aria-label="Guitar parts viewer"
     >
-      <div className="content-width">
-        <p className="eyebrow" style={{ marginBottom: "1rem" }}>Anatomy</p>
-        <h2 className="display-2" style={{ color: "var(--ink)", marginBottom: "3rem" }}>
+      <div className="content-width relative z-10">
+        <p className="eyebrow" style={{ marginBottom: "1rem", color: "var(--mill)", opacity: 0.8 }}>Anatomy</p>
+        <h2 className="display-2" style={{ color: "var(--mill)", marginBottom: "3rem", textShadow: "0 4px 16px rgba(0,0,0,0.5)" }}>
           The components
         </h2>
 
@@ -43,9 +43,9 @@ export function PartsViewerSection({ onQuoteOpen }: PartsViewerSectionProps) {
         ) : (
           <div
             style={{
-              height: "70vh",
-              minHeight: "500px",
-              background: "rgba(10,36,80,0.03)",
+              height: "75vh",
+              minHeight: "600px",
+              background: "transparent",
               borderRadius: "4px",
               position: "relative",
               overflow: "hidden",
@@ -54,16 +54,18 @@ export function PartsViewerSection({ onQuoteOpen }: PartsViewerSectionProps) {
             <Suspense
               fallback={
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="spec" style={{ color: "var(--blueprint)", opacity: 0.5 }}>Loading 3D model...</p>
+                  <p className="spec" style={{ color: "var(--mill)", opacity: 0.5 }}>Loading 3D model...</p>
                 </div>
               }
             >
               <Canvas
                 camera={{ position: [0, 0, 5], fov: 45 }}
                 style={{ width: "100%", height: "100%" }}
+                gl={{ alpha: true }}
               >
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 5]} intensity={1} />
+                <spotLight position={[-5, 5, 5]} intensity={1.5} color="#c9a227" penumbra={1} />
                 <Center>
                   <GuitarModel onQuoteOpen={onQuoteOpen} />
                 </Center>
