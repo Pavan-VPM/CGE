@@ -95,9 +95,7 @@
 }
 
 /* ============================================================
-   Cinematic preloader — deliberately its own temporary world.
-   The geometry remains vector/CSS so the opening is light enough
-   to begin before the Three background has settled.
+   Preloader — Material Cut Animation
    ============================================================ */
 .preloader-root {
   position: fixed;
@@ -105,67 +103,67 @@
   z-index: 9999;
   overflow: hidden;
   isolation: isolate;
-  color: #e8f0fb;
-  background: #07162e;
-  font-family: var(--font-family-archivo);
+  background: #03070d; /* Pure cinematic black */
   will-change: transform;
 }
 
-.preloader-root::before {
+.preloader-stage {
   position: absolute;
   inset: 0;
-  z-index: -2;
-  background: radial-gradient(ellipse 85% 70% at 72% 38%, #123866 0%, #0a2450 44%, #07162e 100%);
-  content: "";
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.preloader-noise {
+/* The initial glowing cut line */
+.preloader-cut-line {
   position: absolute;
-  inset: -50%;
-  z-index: 4;
-  opacity: .08;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100vh;
+  background: #d6a72a;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top center;
+  box-shadow: 0 0 15px rgba(214, 167, 42, 0.8), 0 0 30px rgba(214, 167, 42, 0.4);
+  z-index: 2;
 }
 
-.preloader-corner { position: absolute; z-index: 5; color: rgba(232,240,251,.48); font-family: var(--font-family-mono); font-size: 9px; letter-spacing: .12em; }
-.preloader-corner--top { top: clamp(18px, 3vw, 48px); left: clamp(18px, 4vw, 68px); }
-.preloader-corner--bottom { right: clamp(18px, 4vw, 68px); bottom: clamp(18px, 3vw, 48px); }
-.preloader-visuals { position: absolute; inset: 0; perspective: 1000px; pointer-events: none; }
-.preloader-grain { position: absolute; width: min(76vw, 1050px); overflow: visible; stroke: rgba(201,162,39,.52); stroke-width: 1; }
-.preloader-grain--one { top: 8%; right: -12%; transform: rotate(-8deg); }
-.preloader-grain--two { bottom: 3%; left: -22%; opacity: .55 !important; transform: rotate(12deg) scale(1.22); }
-.preloader-grid { position: absolute; width: min(56vw, 720px); height: min(50vw, 580px); right: -7vw; top: 18%; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid rgba(232,240,251,.14); transform: rotateX(56deg) rotateZ(-18deg); transform-style: preserve-3d; }
-.preloader-grid i { border-right: 1px solid rgba(232,240,251,.14); border-bottom: 1px solid rgba(232,240,251,.14); }
-.preloader-strings { position: absolute; top: 34%; right: -6vw; width: 78vw; transform: rotate(-10deg); }
-.preloader-string { display: block; height: 1px; margin: 16px 0; background: linear-gradient(90deg, transparent, rgba(232,240,251,.82) 45%, rgba(201,162,39,.8)); box-shadow: 0 0 12px rgba(232,240,251,.12); }
-.preloader-route-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.preloader-route { stroke: #c9a227; stroke-width: 1.2; stroke-dasharray: 860; filter: drop-shadow(0 0 6px rgba(201,162,39,.4)); }
-.preloader-node { fill: #e8f0fb; filter: drop-shadow(0 0 8px rgba(232,240,251,.75)); }
-.preloader-content { position: absolute; z-index: 5; top: 50%; left: clamp(18px, 11vw, 180px); width: min(78vw, 880px); transform: translateY(-44%); }
-.preloader-meter { margin-bottom: 16px; color: #c9a227; font-family: var(--font-family-mono); font-size: clamp(2rem, 5vw, 4.75rem); font-variant-numeric: tabular-nums; font-weight: 400; letter-spacing: -.08em; line-height: .9; }
-.preloader-meter em { margin-left: .06em; font-size: .38em; font-style: normal; letter-spacing: 0; vertical-align: top; }
-.preloader-copy-wrap { position: relative; height: clamp(4.7rem, 11vw, 10rem); overflow: hidden; }
-.preloader-copy { font-size: clamp(3.2rem, 9.4vw, 10rem); font-weight: 800; letter-spacing: -.075em; line-height: .82; text-transform: uppercase; }
-.preloader-copy-line { position: absolute; inset: 0; display: block; }
-.preloader-origin { height: 20px; margin-top: clamp(18px, 3vw, 44px); overflow: hidden; }
-.preloader-word { display: inline-block; color: rgba(232,240,251,.64); font-family: var(--font-family-mono); font-size: clamp(9px, 1vw, 12px); letter-spacing: .14em; line-height: 1.45; }
-.preloader-rule { position: relative; width: min(56vw, 630px); height: 1px; margin-top: 22px; overflow: hidden; background: rgba(232,240,251,.18); }
-.preloader-scan { position: absolute; inset: 0; transform: scaleX(0); transform-origin: left; background: #c9a227; }
-.preloader-brand { position: absolute; z-index: 6; right: clamp(18px, 8vw, 140px); bottom: clamp(30px, 12vh, 128px); width: min(75vw, 920px); clip-path: inset(0 0 100% 0); color: #e8f0fb; font-size: clamp(2.7rem, 8.5vw, 9.25rem); font-weight: 800; letter-spacing: -.08em; line-height: .79; text-align: right; text-transform: uppercase; transform: translateY(22%); }
-.preloader-brand-detail { margin-top: 20px; opacity: 0; color: #c9a227; font-family: var(--font-family-mono); font-size: clamp(8px, .8vw, 11px); font-weight: 400; letter-spacing: .14em; line-height: 1.5; transform: translateY(12px); }
-.preloader-brand-catalog { color: rgba(232,240,251,.55); letter-spacing: .08em; }
+/* The horizontal split masking container */
+.preloader-mask-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Start hidden by clipping precisely to a 0px vertical sliver in the center */
+  clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%);
+  background: radial-gradient(ellipse at center, rgba(10,36,80,0.8) 0%, #03070d 100%);
+  z-index: 1;
+}
 
-@media (max-width: 640px) {
-  .preloader-content { top: 46%; left: 22px; width: calc(100% - 44px); }
-  .preloader-copy-wrap { height: 6.2rem; }
-  .preloader-copy { font-size: clamp(3.2rem, 15vw, 5.1rem); }
-  .preloader-grid { width: 100vw; height: 86vw; right: -26vw; top: 18%; }
-  .preloader-grain--one { width: 140vw; right: -52vw; top: 9%; }
-  .preloader-strings { width: 125vw; right: -49vw; top: 29%; }
-  .preloader-brand { right: 20px; bottom: 58px; width: calc(100% - 40px); font-size: clamp(2.6rem, 14vw, 5.1rem); }
-  .preloader-brand-detail { margin-top: 15px; font-size: 8px; }
-  .preloader-brand-catalog { max-width: 270px; margin-left: auto; }
+/* The typography inside the mask */
+.preloader-brand-title {
+  color: #fff;
+  font-family: var(--font-family-archivo);
+  font-size: clamp(4rem, 12vw, 12rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 0.9;
+}
+
+.preloader-brand-subtitle {
+  color: #d6a72a;
+  font-family: var(--font-family-newsreader);
+  font-size: clamp(1rem, 2vw, 2rem);
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 1rem;
+  letter-spacing: 0.05em;
+  text-align: center;
 }
 
 /* ============================================================
@@ -206,6 +204,105 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ============================================================
+   Cinematic Hero
+   ============================================================ */
+.cinematic-hero {
+  position: relative;
+  height: 400svh; /* More height for a longer, slower scroll story */
+  background: #03070d; /* Deep cinematic black */
+}
+
+.cinematic-hero__sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cinematic-hero__sticky::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 0%, rgba(3, 7, 13, 0.8) 100%);
+  content: "";
+}
+
+.cinematic-hero__act {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  padding: 0 clamp(1rem, 5vw, 4rem);
+  text-align: center;
+}
+
+.cinematic-hero__kicker {
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-family-archivo);
+  font-size: clamp(0.75rem, 1vw, 1rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.cinematic-hero h1,
+.cinematic-hero h2 {
+  color: var(--mill);
+  font-family: var(--font-family-archivo);
+  font-size: clamp(2.5rem, 6vw, 7rem);
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-transform: none; /* Sentence case for a modern editorial look */
+}
+
+.cinematic-hero h1 em,
+.cinematic-hero h2 em {
+  font-family: var(--font-family-newsreader);
+  font-style: italic;
+  font-weight: 400;
+  color: #fff;
+}
+
+.cinematic-hero__body {
+  max-width: 42ch;
+  margin: 2rem auto 0;
+  color: rgba(242, 244, 247, 0.6);
+  font-family: var(--font-family-newsreader);
+  font-size: clamp(1rem, 1.2vw, 1.5rem);
+  line-height: 1.6;
+}
+
+.cinematic-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding-bottom: 0.5rem;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: var(--mill);
+  cursor: pointer;
+  font-family: var(--font-family-archivo);
+  font-size: clamp(0.875rem, 1vw, 1.125rem);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: border-color 0.3s ease;
+}
+
+.cinematic-hero__cta:hover {
+  border-color: var(--mill);
+}
+
+.hero-nav__brand { display: flex; align-items: center; gap: 10px; color: var(--mill); font-family: var(--font-family-mono); font-size: 10px; font-weight: 400; letter-spacing: .13em; text-decoration: none; }.hero-nav__brand svg { color: #d6a72a; }.hero-nav__links { gap: clamp(20px, 3vw, 52px); }.hero-nav__links a { color: rgba(242,244,247,.68); font-family: var(--font-family-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; transition: color .2s ease; }.hero-nav__links a:hover { color: var(--mill); }.hero-nav__cta { display: inline-flex; align-items: center; gap: 16px; margin-left: clamp(4px, 1vw, 18px); padding: 8px 0; border: 0; border-bottom: 1px solid #d6a72a; background: transparent; color: var(--mill); cursor: pointer; font-family: var(--font-family-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }.hero-nav__cta span { color: #d6a72a; font-size: 15px; }.hero-nav__cta:hover { color: #d6a72a; }
 
 /* ============================================================
    Typography Classes
@@ -486,3 +583,41 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* ============================================================
+   Sourcing Scrollytelling Marquee
+   ============================================================ */
+.sourcing-marquee-root {
+  transition: opacity 0.3s ease;
+  opacity: 0.65;
+}
+
+.sourcing-marquee-root:hover {
+  opacity: 1;
+}
+
+.sourcing-marquee {
+  display: flex;
+  width: max-content;
+  animation: sourcing-marquee-anim 28s linear infinite;
+}
+
+.sourcing-marquee-root:hover .sourcing-marquee {
+  animation-play-state: paused;
+}
+
+@keyframes sourcing-marquee-anim {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sourcing-marquee {
+    animation: none;
+  }
+}
+

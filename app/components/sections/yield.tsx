@@ -1,309 +1,271 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import ScrollTrigger from "gsap/dist/ScrollTrigger";
-import { useReducedMotion, motion, useScroll, useTransform } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+// ── Design Tokens ────────────────────────────────────────────────────────────
+const AMBER = "#C9A05C";
+const TEXT_HI = "#F2F4F7";
+const TEXT_MID = "rgba(242, 244, 247, 0.65)";
+const TEXT_MUTED = "rgba(242, 244, 247, 0.35)";
+const MONO = "var(--font-ibm-plex-mono, monospace)";
+const SERIF = "var(--font-newsreader, Georgia, serif)";
+const SANS = "var(--font-archivo, system-ui, sans-serif)";
 
-// SVG object silhouettes for state 3
-const FINISHED_GOODS = [
-  { label: "Fretboard", d: "M10,0 L50,0 L48,140 L12,140 Z", fill: false },
-  { label: "Bridge", d: "M0,10 Q30,0 60,10 L60,30 Q30,40 0,30 Z", fill: true },
-  { label: "Neck", d: "M15,0 L45,0 L42,200 L18,200 Q10,180 12,100 Z", fill: false },
-  { label: "Table top", d: "M0,0 L180,0 L180,100 L0,100 Z", fill: false },
-  { label: "Chair leg", d: "M10,0 L30,0 L30,160 L10,160 Z", fill: false },
-  { label: "Ply sheet 1", d: "M0,0 L140,0 L140,80 L0,80 Z", fill: true },
-  { label: "Ply sheet 2", d: "M0,0 L140,0 L140,80 L0,80 Z", fill: false },
-  { label: "Veneer 1", d: "M0,0 L120,0 L120,20 L0,20 Z", fill: true },
-  { label: "Veneer 2", d: "M0,0 L120,0 L120,20 L0,20 Z", fill: false },
-  { label: "Billet 1", d: "M0,0 L60,0 L60,120 L0,120 Z", fill: false },
-  { label: "Billet 2", d: "M0,0 L60,0 L60,120 L0,120 Z", fill: true },
-  { label: "Saddle", d: "M0,5 Q30,0 60,5 L60,15 Q30,20 0,15 Z", fill: true },
-  { label: "Binding strip", d: "M0,0 L80,0 L80,8 L0,8 Z", fill: false },
-  { label: "Rosette ring", d: "M20,20 A20,20 0 1,0 20,19.9 Z", fill: true },
-  { label: "Fret", d: "M0,0 L70,0 L70,4 L0,4 Z", fill: false },
-  { label: "Bracing strip", d: "M0,0 L90,0 L90,10 L0,10 Z", fill: true },
-  { label: "Headstock", d: "M0,0 L80,0 L80,60 Q40,80 0,60 Z", fill: false },
-  { label: "Nut", d: "M0,0 L50,0 L50,8 L0,8 Z", fill: true },
-  { label: "Panel", d: "M0,0 L160,0 L160,90 L0,90 Z", fill: false },
-  { label: "Back plate", d: "M10,0 Q80,-10 150,0 L140,120 Q80,140 20,120 Z", fill: false },
+const INTERVAL_MS = 4000;
+
+const STAGES = [
+  {
+    step: "01",
+    label: "THE LOG",
+    headline: "One log.",
+    narrative: "Harvested at equilibrium maturity in the Kodagu reserve. A single intact cylinder of heartwood and acoustic sapwood.",
+    image: "/images/yield/log.jpg",
+    alt: "Cross section of raw Indian rosewood log showing natural growth rings and bark",
+    spec: "840 mm Diameter · 84.6% Heartwood",
+  },
+  {
+    step: "02",
+    label: "QUARTERSAWN",
+    headline: "Quartersawn four ways.",
+    narrative: "Radial saw lines cut strictly perpendicular to the annual growth rings. This releases internal tension so the grain never cups or warps in transit.",
+    image: "/images/yield/billets.jpg",
+    alt: "Log cut into four clean quartersawn radial billets",
+    spec: "90° Radial Cut · 0.0° Grain Runout",
+  },
+  {
+    step: "03",
+    label: "THE YIELD",
+    headline: "Nothing left over.",
+    narrative: "Offcuts from furniture slabs become acoustic guitar fretboards. Narrow trims become bridge blanks. The recovery is calculated across both trades before the blade touches bark.",
+    image: "/images/yield/goods.jpg",
+    alt: "Finished rosewood guitar fretboards, acoustic bridge plate, and thin veneer sheets",
+    spec: "94.2% Recovery · Zero Core Waste",
+  },
 ];
 
 export function YieldSection() {
-  const prefersReduced = useReducedMotion();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const logRef = useRef<SVGGElement>(null);
-  const billetsRef = useRef<SVGGElement>(null);
-  const goodsRef = useRef<SVGGElement>(null);
-  const caption1Ref = useRef<HTMLParagraphElement>(null);
-  const caption2Ref = useRef<HTMLParagraphElement>(null);
-  const caption3Ref = useRef<HTMLParagraphElement>(null);
+  const [activeStage, setActiveStage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
+  // Auto-scroll through stages every 4 seconds unless paused
   useEffect(() => {
-    if (prefersReduced || !containerRef.current) return;
+    if (isPaused) return;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: pinRef.current,
-          start: "top top",
-          end: `+=${window.innerHeight * 3}`,
-          pin: true,
-          scrub: 1.5,
-          anticipatePin: 1,
-        },
-      });
+    const timer = setInterval(() => {
+      setActiveStage((prev) => (prev + 1) % STAGES.length);
+    }, INTERVAL_MS);
 
-      // State 1 → 2: log splits
-      tl.to(logRef.current, { opacity: 0, scale: 0.9, duration: 0.3 })
-        .to(caption1Ref.current, { opacity: 0, duration: 0.2 }, "<")
-        .fromTo(billetsRef.current, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4 })
-        .fromTo(caption2Ref.current, { opacity: 0 }, { opacity: 1, duration: 0.3 }, "<0.1");
+    return () => clearInterval(timer);
+  }, [isPaused, activeStage]);
 
-      // State 2 → 3: billets multiply into goods
-      tl.to(billetsRef.current, { opacity: 0, duration: 0.3 })
-        .to(caption2Ref.current, { opacity: 0, duration: 0.2 }, "<")
-        .fromTo(goodsRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5 })
-        .fromTo(caption3Ref.current, { opacity: 0 }, { opacity: 1, duration: 0.3 }, "<0.1");
-
-      // Stagger in goods SVG items
-      tl.fromTo(
-        "#yield-goods rect, #yield-goods path, #yield-goods ellipse",
-        { scale: 0, opacity: 0, transformOrigin: "center center" },
-        { scale: 1, opacity: 1, stagger: 0.025, duration: 0.5 },
-        "<"
-      );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [prefersReduced]);
-
-  if (prefersReduced) {
-    return (
-      <section
-        id="yield"
-        className="section-pad relative"
-        style={{ backgroundColor: "transparent" }}
-        aria-label="One log, many goods"
-      >
-        <div className="content-width relative z-10">
-          <p className="eyebrow" style={{ marginBottom: "3rem", color: "var(--mill)" }}>Yield</p>
-          <div className="flex flex-col gap-16">
-            {/* State 1 */}
-            <div className="flex flex-col items-center gap-4 text-center glass-panel p-12 rounded-lg">
-              <YieldLogSVG />
-              <p className="display-3" style={{ color: "var(--mill)" }}>One log.</p>
-            </div>
-            {/* State 2 */}
-            <div className="flex flex-col items-center gap-4 text-center glass-panel p-12 rounded-lg">
-              <YieldBilletsSVG />
-              <p className="display-3" style={{ color: "var(--mill)" }}>Quartersawn four ways.</p>
-            </div>
-            {/* State 3 */}
-            <div className="flex flex-col items-center gap-4 text-center glass-panel p-12 rounded-lg">
-              <YieldGoodsSVG />
-              <p className="display-3" style={{ color: "var(--mill)" }}>Nothing left over.</p>
-            </div>
-          </div>
-          <YieldCopy />
-        </div>
-      </section>
-    );
-  }
+  const cur = STAGES[activeStage];
 
   return (
-    <div ref={containerRef}>
-      <section
-        id="yield"
-        style={{ backgroundColor: "transparent" }}
-        aria-label="One log, many goods"
-      >
-        <div ref={pinRef} style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-          <p className="eyebrow absolute top-8 left-1/2 -translate-x-1/2" style={{ color: "var(--mill)", opacity: 0.8 }}>Yield</p>
-
-          <div className="glass-panel" style={{ position: "relative", width: "100%", maxWidth: 700, margin: "0 auto", padding: "4rem", borderRadius: "16px" }}>
-            {/* All three states overlaid */}
-            <svg
-              viewBox="0 0 700 400"
-              style={{ width: "100%", height: "auto", display: "block" }}
-              aria-hidden="true"
-            >
-              {/* State 1 — Log */}
-              <g ref={logRef}>
-                <ellipse cx="350" cy="200" rx="280" ry="100" fill="var(--rosewood)" />
-                <ellipse cx="350" cy="200" rx="230" ry="75" fill="none" stroke="var(--brass)" strokeWidth="1.5" />
-                <ellipse cx="350" cy="200" rx="170" ry="55" fill="none" stroke="var(--brass)" strokeWidth="1" />
-                <ellipse cx="350" cy="200" rx="110" ry="35" fill="none" stroke="var(--brass)" strokeWidth="0.8" />
-                <ellipse cx="350" cy="200" rx="50" ry="16" fill="none" stroke="var(--brass)" strokeWidth="0.8" />
-                <line x1="70" y1="200" x2="630" y2="200" stroke="var(--brass)" strokeWidth="1" strokeDasharray="4 4" />
-                <line x1="350" y1="100" x2="350" y2="300" stroke="var(--brass)" strokeWidth="1" strokeDasharray="4 4" />
-              </g>
-
-              {/* State 2 — Billets */}
-              <g ref={billetsRef} style={{ opacity: 0 }}>
-                {[
-                  { x: 100, y: 80, w: 220, h: 100, rotate: -5 },
-                  { x: 390, y: 80, w: 220, h: 100, rotate: 5 },
-                  { x: 100, y: 220, w: 220, h: 100, rotate: 5 },
-                  { x: 390, y: 220, w: 220, h: 100, rotate: -5 },
-                ].map((b, i) => (
-                  <g key={i} transform={`rotate(${b.rotate}, ${b.x + b.w / 2}, ${b.y + b.h / 2})`}>
-                    <rect
-                      x={b.x}
-                      y={b.y}
-                      width={b.w}
-                      height={b.h}
-                      rx="4"
-                      fill="var(--rosewood)"
-                      opacity="0.85"
-                    />
-                    <rect
-                      x={b.x + 8}
-                      y={b.y + 8}
-                      width={b.w - 16}
-                      height={b.h - 16}
-                      rx="2"
-                      fill="none"
-                      stroke="var(--brass)"
-                      strokeWidth="1"
-                    />
-                  </g>
-                ))}
-              </g>
-
-              {/* State 3 — Finished goods scatter */}
-              <g ref={goodsRef} id="yield-goods" style={{ opacity: 0 }}>
-                {FINISHED_GOODS.slice(0, 12).map((item, i) => {
-                  const col = i % 4;
-                  const row = Math.floor(i / 4);
-                  const tx = 80 + col * 140;
-                  const ty = 60 + row * 110;
-                  const scale = 0.35 + Math.random() * 0.15;
-                  return (
-                    <g key={i} transform={`translate(${tx}, ${ty}) scale(${scale})`}>
-                      <path
-                        d={item.d}
-                        fill={item.fill ? "var(--rosewood)" : "none"}
-                        stroke="var(--ink)"
-                        strokeWidth={item.fill ? 0 : 2}
-                        opacity="0.85"
-                      />
-                    </g>
-                  );
-                })}
-              </g>
-            </svg>
-
-            {/* Captions */}
-            <p
-              ref={caption1Ref}
-              className="display-3 text-center"
-              style={{ color: "var(--mill)", marginTop: "1.5rem" }}
-            >
-              One log.
-            </p>
-            <p
-              ref={caption2Ref}
-              className="display-3 text-center absolute bottom-0 inset-x-0"
-              style={{ color: "var(--mill)", opacity: 0 }}
-            >
-              Quartersawn four ways.
-            </p>
-            <p
-              ref={caption3Ref}
-              className="display-3 text-center absolute bottom-0 inset-x-0"
-              style={{ color: "var(--mill)", opacity: 0 }}
-            >
-              Nothing left over.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Released content */}
-      <section
-        className="section-pad"
-        style={{ backgroundColor: "transparent" }}
-        aria-label="Yield practice"
-      >
-        <div className="content-width glass-panel" style={{ maxWidth: "60ch", padding: "3rem", borderRadius: "12px" }}>
-          <YieldCopy />
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function YieldLogSVG() {
-  return (
-    <svg viewBox="0 0 400 200" style={{ width: "100%", maxWidth: 400, height: "auto" }} aria-hidden="true">
-      <ellipse cx="200" cy="100" rx="180" ry="70" fill="var(--rosewood)" />
-      <ellipse cx="200" cy="100" rx="140" ry="52" fill="none" stroke="var(--brass)" strokeWidth="1.5" />
-      <ellipse cx="200" cy="100" rx="90" ry="34" fill="none" stroke="var(--brass)" strokeWidth="1" />
-    </svg>
-  );
-}
-
-function YieldBilletsSVG() {
-  return (
-    <svg viewBox="0 0 400 200" style={{ width: "100%", maxWidth: 400, height: "auto" }} aria-hidden="true">
-      {[
-        { x: 20, y: 20, w: 170, h: 70, rotate: -3 },
-        { x: 210, y: 20, w: 170, h: 70, rotate: 3 },
-        { x: 20, y: 110, w: 170, h: 70, rotate: 3 },
-        { x: 210, y: 110, w: 170, h: 70, rotate: -3 },
-      ].map((b, i) => (
-        <g key={i} transform={`rotate(${b.rotate}, ${b.x + b.w / 2}, ${b.y + b.h / 2})`}>
-          <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="3" fill="var(--rosewood)" opacity="0.85" />
-        </g>
-      ))}
-    </svg>
-  );
-}
-
-function YieldGoodsSVG() {
-  return (
-    <svg viewBox="0 0 400 200" style={{ width: "100%", maxWidth: 400, height: "auto" }} aria-hidden="true">
-      {[
-        { x: 20, y: 10, w: 60, h: 140, fill: true, label: "fretboard" },
-        { x: 95, y: 40, w: 120, h: 60, fill: false, label: "tabletop" },
-        { x: 230, y: 10, w: 40, h: 180, fill: false, label: "neck" },
-        { x: 285, y: 20, w: 100, h: 50, fill: true, label: "ply" },
-        { x: 285, y: 85, w: 100, h: 50, fill: false, label: "ply2" },
-        { x: 20, y: 165, w: 360, h: 12, fill: true, label: "veneer" },
-      ].map((item) => (
-        <rect
-          key={item.label}
-          x={item.x}
-          y={item.y}
-          width={item.w}
-          height={item.h}
-          rx="2"
-          fill={item.fill ? "var(--rosewood)" : "none"}
-          stroke="var(--ink)"
-          strokeWidth={item.fill ? 0 : 1.5}
-          opacity={0.85}
-        />
-      ))}
-    </svg>
-  );
-}
-
-function YieldCopy() {
-  return (
-    <p
-      className="body-text"
-      style={{ color: "var(--mill)", marginTop: "2rem" }}
+    <section
+      id="yield"
+      aria-label="Yield and log recovery"
+      className="relative overflow-hidden w-full flex flex-col items-center justify-center text-center"
+      style={{
+        backgroundColor: "#060910",
+        paddingTop: "clamp(5rem, 9vw, 8rem)",
+        paddingBottom: "clamp(5rem, 9vw, 8rem)",
+        paddingLeft: "1.5rem",
+        paddingRight: "1.5rem",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
-      Offcuts from furniture stock become instrument parts. A board too narrow
-      for a tabletop is exactly right for a fretboard blank. This is why our
-      minimum order can be low on small components: the yield is already
-      planned across both trades before the log is cut.
-    </p>
+      <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
+        
+        {/* Minimal Editorial Masthead */}
+        <div className="mb-10">
+          <p
+            style={{
+              fontFamily: MONO,
+              fontSize: "0.65rem",
+              letterSpacing: "0.24em",
+              color: AMBER,
+              textTransform: "uppercase",
+              marginBottom: "0.85rem",
+            }}
+          >
+            03 // LOG CONVERSION
+          </p>
+
+          <h2
+            style={{
+              fontFamily: SERIF,
+              fontSize: "clamp(2.2rem, 4.5vw, 3.8rem)",
+              fontWeight: 500,
+              lineHeight: 1.15,
+              color: TEXT_HI,
+              letterSpacing: "-0.015em",
+            }}
+          >
+            From tree to specification.
+          </h2>
+        </div>
+
+        {/* ── Centerpiece Specimen Viewer (4:3 Aspect Ratio) ─────────── */}
+        <div
+          className="relative w-full max-w-lg aspect-[4/3] my-2 rounded overflow-hidden shadow-2xl"
+          style={{
+            border: "1px solid rgba(201, 160, 92, 0.22)",
+            backgroundColor: "#03060A",
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={cur.step}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+              className="absolute inset-0 w-full h-full"
+            >
+              <Image
+                src={cur.image}
+                alt={cur.alt}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 550px"
+                className="object-cover"
+              />
+
+              {/* Specimen Badge Overlay */}
+              <div
+                className="absolute bottom-3 right-3 px-2.5 py-1 rounded select-none"
+                style={{
+                  fontFamily: MONO,
+                  fontSize: "0.58rem",
+                  letterSpacing: "0.12em",
+                  color: AMBER,
+                  background: "rgba(6, 9, 16, 0.85)",
+                  border: "1px solid rgba(201, 160, 92, 0.3)",
+                  backdropFilter: "blur(6px)",
+                }}
+              >
+                {cur.spec}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* ── Segmented Auto-Scroll Progress Stepper ─────────────────── */}
+        <div className="w-full max-w-lg mt-8 mb-8 select-none">
+          <div className="grid grid-cols-3 gap-3">
+            {STAGES.map((s, idx) => {
+              const isCurrent = activeStage === idx;
+              const isPast = activeStage > idx;
+
+              return (
+                <button
+                  key={s.step}
+                  onClick={() => {
+                    setActiveStage(idx);
+                    setIsPaused(true);
+                  }}
+                  className="cursor-pointer text-left outline-none group"
+                >
+                  {/* Step Label */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      style={{
+                        fontFamily: MONO,
+                        fontSize: "0.62rem",
+                        letterSpacing: "0.12em",
+                        color: isCurrent ? AMBER : TEXT_MUTED,
+                        fontWeight: isCurrent ? 600 : 400,
+                        transition: "color 0.2s",
+                      }}
+                    >
+                      {s.step} {s.label}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar Line */}
+                  <div
+                    className="w-full h-[2px] rounded-full overflow-hidden relative"
+                    style={{ backgroundColor: "rgba(255, 255, 255, 0.12)" }}
+                  >
+                    {isCurrent && (
+                      <motion.div
+                        key={`prog-${idx}-${isPaused}`}
+                        className="h-full"
+                        style={{ backgroundColor: AMBER }}
+                        initial={{ width: "0%" }}
+                        animate={{ width: isPaused ? "100%" : "100%" }}
+                        transition={{
+                          duration: isPaused ? 0.2 : INTERVAL_MS / 1000,
+                          ease: "linear",
+                        }}
+                      />
+                    )}
+                    {isPast && (
+                      <div className="h-full w-full" style={{ backgroundColor: AMBER }} />
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Headline & Narrative (Synced with Active Stage) ────────── */}
+        <div className="max-w-lg min-h-[6.5rem]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={cur.step}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h3
+                style={{
+                  fontFamily: SERIF,
+                  fontSize: "clamp(1.75rem, 2.8vw, 2.3rem)",
+                  fontWeight: 500,
+                  color: TEXT_HI,
+                  marginBottom: "0.6rem",
+                }}
+              >
+                {cur.headline}
+              </h3>
+
+              <p
+                style={{
+                  fontFamily: SANS,
+                  fontSize: "0.9rem",
+                  lineHeight: 1.7,
+                  color: TEXT_MID,
+                }}
+              >
+                {cur.narrative}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Centered Footnote */}
+        <div
+          className="w-full max-w-lg mt-8 pt-5 border-t flex items-center justify-between text-[0.62rem]"
+          style={{
+            borderColor: "rgba(255, 255, 255, 0.08)",
+            fontFamily: MONO,
+            color: TEXT_MUTED,
+          }}
+        >
+          <span>KODAGU MILL RECOVERY</span>
+          <span style={{ color: AMBER }}>
+            {isPaused ? "PAUSED (HOVERING)" : "AUTO-CONVERTING"}
+          </span>
+        </div>
+
+      </div>
+    </section>
   );
 }
